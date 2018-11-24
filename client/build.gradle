@@ -1,0 +1,7 @@
+plugins {
+    id 'org.mohme.gradle.elm-plugin' version '2.0.1'
+}
+
+elmMake {
+    sourceDir = new File("src/")
+}
