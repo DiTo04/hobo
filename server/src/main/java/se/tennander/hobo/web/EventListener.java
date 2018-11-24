@@ -3,6 +3,7 @@ package se.tennander.hobo.web;
 import javax.inject.Inject;
 
 import io.javalin.Javalin;
+import io.javalin.json.JavalinJson;
 import io.javalin.websocket.WsSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ public class EventListener {
   private static Logger log = LoggerFactory.getLogger(EventListener.class);
   private final Javalin javalin;
   private final EventStream eventStream;
-  private State currentState;
+  private State currentState = State.newGame();
 
   @Inject
   EventListener(Javalin javalin, EventStream eventStream) {
@@ -32,7 +33,10 @@ public class EventListener {
     javalin.get("/health", ctx -> {
       ctx.json("Okey");
       log.info("Got health check!");
-      currentState = eventStream.handleEvent(Event.gotHealthCheck(), currentState);
+      eventStream.handleEvent(Event.gotHealthCheck(), currentState);
+    });
+    javalin.get("/current_state", ctx -> {
+      ctx.json(currentState);
     });
 
     javalin.start(8080);
@@ -46,7 +50,7 @@ public class EventListener {
     String id = session.pathParam("id");
     log.info("Got session on id: {}", id);
     currentState = eventStream.handleEvent(Event.newConnection(), currentState);
-    session.send(currentState.toString());
+    session.send(JavalinJson.toJson(currentState));
   }
 
   private void onClose(WsSession session,  int statusCode, String reason) {
@@ -65,6 +69,6 @@ public class EventListener {
     log.info("Got message: \"{}\" on id: {}", message, id);
     PlaySocketEvent event = PlaySocketEvent.fromString(message);
     currentState = eventStream.handleEvent(Event.Play(event.player, event.x, event.y), currentState);
-    session.send(currentState.toString());
+    session.send(JavalinJson.toJson(currentState));
   }
 }

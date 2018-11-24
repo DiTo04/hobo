@@ -8,32 +8,29 @@ public class State {
   public List<List<Tile>> tiles;
   public PlayerMark turn;
   public PlayerMark winner;
-  public PlayerMark player;
 
-  private State(List<List<Tile>> tiles, PlayerMark turn, PlayerMark winner, PlayerMark player) {
+  private State(List<List<Tile>> tiles, PlayerMark turn, PlayerMark winner) {
     this.tiles = tiles;
     this.turn = turn;
     this.winner = winner;
-    this.player = player;
   }
 
   public static State newGame() {
     return new State(
         getEmptyTiles(),
         PlayerMark.X,
-        PlayerMark.Empty,
-        PlayerMark.X
+        PlayerMark.Empty
     );
   }
 
   @NotNull
   private static List<List<Tile>> getEmptyTiles() {
-    return List.of(getEmptyRow(0), getEmptyRow(1), getEmptyRow(2));
+    return List.of(getEmptyRow(-1), getEmptyRow(0), getEmptyRow(1));
   }
 
   @NotNull
   private static List<Tile> getEmptyRow(int x) {
-    return List.of(Tile.empty(x,0), Tile.empty(x,1), Tile.empty(x,2));
+    return List.of(Tile.empty(x,-1), Tile.empty(x,0), Tile.empty(x,1));
   }
 
   public static class Tile {
