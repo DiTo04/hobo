@@ -1,0 +1,5 @@
+rootProject.name = 'hobo'
+
+include "client"
+include "server"
+

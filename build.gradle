@@ -1,0 +1,10 @@
+group 'se.tennander.hobo'
+version '1.0-SNAPSHOT'
+
+apply from: "dependencies.gradle"
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}

@@ -1,0 +1,9 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = 11
+
+dependencies {
+    testCompile junit
+}
