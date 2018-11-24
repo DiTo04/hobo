@@ -1,2 +1,4 @@
 .gradle
 build
+client/SocketTest
+.DS_store

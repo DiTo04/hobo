@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Main</title>
+  <!-- <link rel="stylesheet" href="whatever-you-want.css"> -->
+  <script src="main.js"></script>
+</head>
+
+<body>
+  <div id="elm"></div>
+  <script>
+    var ws = new WebSocket("wss://echo.websocket.org");
+    var time = Date.now();
+    console.log(time);
+    
+    var app = Elm.Main.init({
+      node: document.getElementById('elm'),
+      flags: time
+    });
+    ws.onmessage = message => {
+      console.log(message);
+    }
+    app.ports.sendAction.subscribe(msg => {
+      console.log(msg);
+      ws.send(msg);
+    });
+  </script>
+</body>
+</html>
