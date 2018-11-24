@@ -1,6 +1,6 @@
 package se.tennander.hobo.web;
 
-public class PlaySocketEvent {
+class PlaySocketEvent {
 
   final String player;
   final int x;
@@ -12,7 +12,7 @@ public class PlaySocketEvent {
     this.y = y;
   }
 
-  public static PlaySocketEvent fromString(String msg) {
+  static PlaySocketEvent fromString(String msg) {
     String[] csv = msg.split(",");
     return new PlaySocketEvent(csv[0], Integer.valueOf(csv[1]), Integer.valueOf(csv[2]));
   }

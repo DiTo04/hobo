@@ -1,8 +1,9 @@
 package se.tennander.hobo.events;
 
-import io.reactivex.Observable;
+import se.tennander.hobo.State;
 
 public interface EventStream {
-  void publish(Event event);
-  Observable<Event> getObservable();
+
+  State handleEvent(Event event, State oldState);
+  
 }

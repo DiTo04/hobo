@@ -1,4 +1,4 @@
-package se.tennander.hobo.logic;
+package se.tennander.hobo.game;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,4 +11,8 @@ public abstract class LogicModule {
   @Binds
   @IntoSet
   abstract Listener provideHealthCheckLogger(HealthCheckLogger impl);
+
+  @Binds
+  @IntoSet
+  abstract Listener provideGameSession(GameSession impl);
 }

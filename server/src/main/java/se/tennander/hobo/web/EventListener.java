@@ -6,6 +6,7 @@ import io.javalin.Javalin;
 import io.javalin.websocket.WsSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.tennander.hobo.State;
 import se.tennander.hobo.events.EventStream;
 import se.tennander.hobo.events.Event;
 
@@ -13,6 +14,7 @@ public class EventListener {
   private static Logger log = LoggerFactory.getLogger(EventListener.class);
   private final Javalin javalin;
   private final EventStream eventStream;
+  private State currentState;
 
   @Inject
   EventListener(Javalin javalin, EventStream eventStream) {
@@ -30,7 +32,7 @@ public class EventListener {
     javalin.get("/health", ctx -> {
       ctx.json("Okey");
       log.info("Got health check!");
-      eventStream.publish(Event.gotHealthCheck());
+      currentState = eventStream.handleEvent(Event.gotHealthCheck(), currentState);
     });
 
     javalin.start(8080);
@@ -43,13 +45,14 @@ public class EventListener {
   private void onConnect(WsSession session) {
     String id = session.pathParam("id");
     log.info("Got session on id: {}", id);
-    eventStream.publish(Event.newConnection());
+    currentState = eventStream.handleEvent(Event.newConnection(), currentState);
+    session.send(currentState.toString());
   }
 
   private void onClose(WsSession session,  int statusCode, String reason) {
     String id = session.pathParam("id");
     log.info("Closed session on id: {}", id);
-    eventStream.publish(Event.closedConnection());
+    currentState = eventStream.handleEvent(Event.closedConnection(), currentState);
   }
 
   private void onError(WsSession session, Throwable throwable) {
@@ -61,6 +64,7 @@ public class EventListener {
     String id = session.pathParam("id");
     log.info("Got message: \"{}\" on id: {}", message, id);
     PlaySocketEvent event = PlaySocketEvent.fromString(message);
-    eventStream.publish(Event.Play(event.player, event.x, event.y));
+    currentState = eventStream.handleEvent(Event.Play(event.player, event.x, event.y), currentState);
+    session.send(currentState.toString());
   }
 }

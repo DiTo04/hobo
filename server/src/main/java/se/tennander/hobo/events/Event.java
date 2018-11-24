@@ -24,9 +24,9 @@ public interface Event {
   }
 
   class Play implements Event {
-    final String player;
-    final int x;
-    final int y;
+    public final String player;
+    public final int x;
+    public final int y;
 
     Play(String player, int x, int y) {
       this.player = player;
