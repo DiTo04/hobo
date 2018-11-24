@@ -1,9 +1,19 @@
 plugins {
     id 'java'
+    id 'application'
+    id "net.ltgt.apt-idea" version "0.19"
 }
 
 sourceCompatibility = 11
 
+mainClassName = "se.tennander.hobo.GameServer"
+
 dependencies {
+    runtime slf4j
+    runtime jackson
+    compile rxJava
+    compile javalin
+    compile dagger
+    annotationProcessor daggerGenerator
     testCompile junit
 }
