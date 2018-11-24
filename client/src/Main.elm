@@ -28,7 +28,7 @@ type alias Model =
   { tiles: List (List Tile)
   , turn: Player
   , winner: Player
-  , flag: Int
+  , player: Player
   }
 
 type Player = X | O | Empty
@@ -42,14 +42,14 @@ type alias Tile =
 startMap : List (List Tile)
 startMap =
   [ [ Tile -1 -1 Empty, Tile 0 -1 Empty, Tile 1 -1 Empty ]
-  , [ Tile -1 0 Empty, Tile 0 0 X, Tile 1 0 Empty ]
-  , [ Tile -1 1 Empty, Tile 0 1 Empty, Tile 1 1 O ]
+  , [ Tile -1 0 Empty, Tile 0 0 Empty, Tile 1 0 Empty ]
+  , [ Tile -1 1 Empty, Tile 0 1 Empty, Tile 1 1 Empty ]
   ]
 
 
 init : Int -> (Model, Cmd Msg)
-init flag =
-  (Model startMap X Empty flag, Cmd.none)
+init _ =
+  (Model startMap X Empty Empty, Cmd.none)
 
 
 
@@ -59,6 +59,7 @@ init flag =
 type Msg
   = SendAction String
   | ChooseTile Tile Player
+  | ChoosePlayer Player
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -71,7 +72,8 @@ update msg model =
         X -> ( model, sendAction ("X," ++ (String.fromInt tile.xcoord) ++ "," ++ (String.fromInt tile.ycoord) ) )
         O -> ( model, sendAction ("O," ++ (String.fromInt tile.xcoord) ++ "," ++ (String.fromInt tile.ycoord) ) )
         _ -> ( model, Cmd.none )
-      
+    ChoosePlayer player ->
+      ( { model | player = player }, Cmd.none )
 
 
 
@@ -89,21 +91,37 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-  div [ class "lol" ]
-    [ 
-      div [] (List.map (
-        \row -> div [] (List.map (\tile -> node tile model.turn ) row)
-      ) model.tiles)
+  div [ class "container" ]
+    [
+      case model.player of
+        Empty ->
+          div []
+          [ div [] [ text "Välj en symbol: " ]
+          , button [ onClick (ChoosePlayer X) ] [ text "X" ]
+          , button [ onClick (ChoosePlayer O) ] [ text "O" ]
+          ]
+        _ ->
+          div []
+          [ div [] [ text ("Du är " ++ (playerToString model.player) )]
+          , div [] (List.map (
+              \row -> div [] (List.map (\tile -> node tile model.turn ) row)
+            ) model.tiles)
+          ]
     ]
 
 node : Tile -> Player -> Html Msg
 node tile player =
   case tile.marker of
-    X -> span [ onClick (SendAction "X") ] [ text "X" ]
-    O -> span [ onClick (SendAction "O") ] [ text "O" ]
+    X -> span [ ] [ text "X" ]
+    O -> span [ ] [ text "O" ]
     Empty -> span [ onClick (ChooseTile tile player) ] [ text "-" ]
 
-
+playerToString : Player -> String
+playerToString player =
+  case player of
+    X -> "X"
+    O -> "O"
+    Empty -> "-"
 
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Main</title>
-  <!-- <link rel="stylesheet" href="whatever-you-want.css"> -->
+  <link rel="stylesheet" href="style.css">
   <script src="elm.js"></script>
 </head>
 
@@ -22,7 +22,7 @@
       console.log(message);
     }
     app.ports.sendAction.subscribe(msg => {
-      console.log(msg);
+      console.log({msg});
       ws.send(msg);
     });
   </script>
