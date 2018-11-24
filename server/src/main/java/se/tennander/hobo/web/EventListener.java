@@ -24,7 +24,7 @@ public class EventListener {
   }
 
   public void listenOnEventsAndWait() {
-    javalin.ws("/websocket/:id", ws -> {
+    javalin.ws("/websocket", ws -> {
       ws.onConnect(this::onConnect);
       ws.onClose(this::onClose);
       ws.onError(this::onError);
@@ -47,26 +47,22 @@ public class EventListener {
    * @param session new session
    */
   private void onConnect(WsSession session) {
-    String id = session.pathParam("id");
-    log.info("Got session on id: {}", id);
+    log.info("Got session");
     currentState = eventStream.handleEvent(Event.newConnection(), currentState);
     session.send(JavalinJson.toJson(currentState));
   }
 
   private void onClose(WsSession session,  int statusCode, String reason) {
-    String id = session.pathParam("id");
-    log.info("Closed session on id: {}", id);
+    log.info("Closed session");
     currentState = eventStream.handleEvent(Event.closedConnection(), currentState);
   }
 
   private void onError(WsSession session, Throwable throwable) {
-    String id = session.pathParam("id");
-    log.warn("Got error: \"{}\" on id: {}",throwable.getClass().getSimpleName(), id);
+    log.warn("Got error: \"{}\"",throwable.getClass().getSimpleName());
   }
 
   private void onMessage(WsSession session, String message) {
-    String id = session.pathParam("id");
-    log.info("Got message: \"{}\" on id: {}", message, id);
+    log.info("Got message: \"{}\"", message);
     PlaySocketEvent event = PlaySocketEvent.fromString(message);
     currentState = eventStream.handleEvent(Event.Play(event.player, event.x, event.y), currentState);
     session.send(JavalinJson.toJson(currentState));

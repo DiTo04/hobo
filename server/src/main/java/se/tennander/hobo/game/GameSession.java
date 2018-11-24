@@ -1,5 +1,7 @@
 package se.tennander.hobo.game;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
 import se.tennander.hobo.Inbound;
@@ -20,7 +22,12 @@ public class GameSession implements Listener {
   }
 
   private State handlePlay(Event.Play play, State state) {
-    state.tiles.get(play.x).get(play.y).marker = State.PlayerMark.valueOf(play.player);
+    state.tiles.stream()
+        .flatMap(Collection::stream)
+        .filter(tile -> tile.x == play.x)
+        .filter(tile -> tile.y == play.y)
+        .findAny()
+        .ifPresent(tile -> tile.marker = State.PlayerMark.valueOf(play.player));
     return state;
   }
 
