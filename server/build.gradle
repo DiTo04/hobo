@@ -17,3 +17,8 @@ dependencies {
     annotationProcessor daggerGenerator
     testCompile junit
 }
+
+processResources {
+    dependsOn.add(":client:build")
+    from(tasks.getByPath(":client:build").outputs) {into "public"}
+}

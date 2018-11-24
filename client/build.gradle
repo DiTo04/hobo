@@ -5,3 +5,9 @@ plugins {
 elmMake {
     sourceDir = new File("src/")
 }
+
+task build(type: Copy, dependsOn: elmMake) {
+    from "${project.buildDir.path}/elm"
+    from "${project.projectDir.path}/public"
+    into "${project.buildDir.path}/public"
+}
